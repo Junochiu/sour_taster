@@ -27,7 +27,7 @@ template RLN(DEPTH) {
     // Linear equation constraints:
     // a1 = Poseidon(identitySecret, externalNullifier)
     // y = a0 + a1 * x
-    // nullifier = Poseidon(a_1)
+    // nullifier = Poseidon(a1)
     signal a1 <== Poseidon(2)([identitySecret, externalNullifier]);
     y <== identitySecret + a1 * x;
 
