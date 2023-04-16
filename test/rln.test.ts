@@ -89,6 +89,8 @@ describe("Check Merkle tree Circuit", function () {
         const outputY = await getSignal(witness, "y")
         const outputNullifier = await getSignal(witness, "nullifier")
 
+        console.log(witness)
+
         assert.equal(outputA1, a1)
         assert.equal(outputY, y)
         assert.equal(outputNullifier, nullifier)

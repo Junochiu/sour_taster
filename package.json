@@ -18,15 +18,21 @@
   },
   "homepage": "#readme",
   "dependencies": {
-    "circomlib": "^2.0.5"
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/solidity": "^5.7.0",
+    "@ethersproject/strings": "^5.7.0",
+    "circomlib": "^2.0.5",
+    "rlnjs": "^2.0.8"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.14.6",
     "@zk-kit/incremental-merkle-tree": "^1.0.0",
     "chai": "^4.3.7",
     "circom_tester": "^0.0.19",
+    "hardhat": "^2.13.1",
     "mocha": "^10.2.0",
     "poseidon-lite": "^0.0.2",
     "snarkjs": "^0.6.7",
