@@ -110,7 +110,7 @@ library Pairing {
         assembly {
             success := staticcall(sub(gas(), 2000), 8, add(input, 0x20), mul(inputSize, 0x20), out, 0x20)
             // Use "invalid" to make gas estimation work
-            //switch success case 0 { invalid() }
+            switch success case 0 { invalid() }
         }
         require(success,"pairing-opcode-failed");
         return out[0] != 0;
@@ -245,9 +245,9 @@ contract Verifier {
         vk_x = Pairing.addition(vk_x, vk.IC[0]);
         if (!Pairing.pairingProd4(
             Pairing.negate(proof.A), proof.B,
+            vk.alfa1, vk.beta2,
             vk_x, vk.gamma2,
-            proof.C, vk.delta2,
-            vk.alfa1, vk.beta2
+            proof.C, vk.delta2
         )) return 1;
         return 0;
     }
