@@ -5,6 +5,7 @@ const fs = require('fs')
 const { hexlify } = require('@ethersproject/bytes')
 const { keccak256 } = require('@ethersproject/solidity')
 const { toUtf8Bytes } = require('@ethersproject/strings')
+const { groth16 } = require('snarkjs')
 
 const zkeyFilesPath = "./build/zkeyFiles"
 const vkeyPath = path.join(zkeyFilesPath, "verification_key.json")
@@ -17,12 +18,6 @@ const rlnInstance = new RLN(wasmFilePath, finalZkeyPath, vKey)
 const registryInstance = new Registry()
 registryInstance.addMember(rlnInstance.commitment)
 
-// Example of accessing the generated identity commitment
-// const identity = rlnInstance.identity()
-// const identityCommitment = rlnInstance.commitment()
-
-//function genNullifier()
-
 async function verifyOnChain(){
     const epoch = 123
     const signal = 0
@@ -32,30 +27,15 @@ async function verifyOnChain(){
     const verifierContract = await verifierFactory.deploy();
     await verifierContract.deployed();
     const publicSignals = [
-        ethers.BigNumber.from(proof.snarkProof.publicSignals.yShare),
-        ethers.BigNumber.from(proof.snarkProof.publicSignals.merkleRoot),
-        ethers.BigNumber.from(proof.snarkProof.publicSignals.internalNullifier),
-        ethers.BigNumber.from(proof.snarkProof.publicSignals.externalNullifier),
-        ethers.BigNumber.from(proof.snarkProof.publicSignals.signalHash),
+        proof.snarkProof.publicSignals.yShare,
+        proof.snarkProof.publicSignals.merkleRoot,
+        proof.snarkProof.publicSignals.internalNullifier,
+        proof.snarkProof.publicSignals.externalNullifier,
+        proof.snarkProof.publicSignals.signalHash,
     ]
-    const proofResult = await rlnInstance.verifyProof(proof)
-    const pi_a = proof.snarkProof.proof.pi_a.slice(0, 2).map(item=>ethers.BigNumber.from(item))
-    const pi_b = proof.snarkProof.proof.pi_b.slice(0, 2).map(([item1, item2])=>(
-        [ethers.BigNumber.from(item1),ethers.BigNumber.from(item2) ]
-    ))
-    const pi_c = proof.snarkProof.proof.pi_c.slice(0, 2).map(item=>ethers.BigNumber.from(item))
-    
-    console.log(pi_a)
-    console.log(pi_b)
-    console.log(pi_c)
     console.log(publicSignals)
-
-    const res = await verifierContract.verifyProof(
-        pi_a,
-        pi_b,
-        pi_c,
-        publicSignals);
-    console.log(res)
+    const solidityCallData = await groth16.exportSolidityCallData(proof.snarkProof.proof, publicSignals)
+    console.log(solidityCallData)
 }
 
 verifyOnChain()
